@@ -1,0 +1,27 @@
+<?php
+
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\MpesaController;
+use App\Http\Middleware\VerifyMpesaCallback;
+
+/*
+|--------------------------------------------------------------------------
+| M-PESA Routes
+|--------------------------------------------------------------------------
+*/
+
+Route::prefix('mpesa')->group(function () {
+
+    // Initiate STK Push (called by your checkout page)
+    Route::post('/initiate', [MpesaController::class, 'initiate']);
+
+    // Poll order payment status
+    Route::get('/status', [MpesaController::class, 'status']);
+
+    // Manually query Daraja for STK status
+    Route::get('/query', [MpesaController::class, 'query']);
+
+    // Safaricom callback – IP-restricted, CSRF-exempt (handled via api routes)
+    Route::post('/callback', [MpesaController::class, 'callback'])
+        ->middleware(VerifyMpesaCallback::class);
+});

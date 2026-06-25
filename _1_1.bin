@@ -1,0 +1,34 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
+class Transaction extends Model
+{
+    protected $fillable = [
+        'order_id',
+        'mpesa_receipt_number',
+        'transaction_date',
+        'amount',
+        'phone',
+        'result_code',
+        'result_desc',
+    ];
+
+    protected $casts = [
+        'transaction_date' => 'datetime',
+        'amount'           => 'decimal:2',
+    ];
+
+    public function order(): BelongsTo
+    {
+        return $this->belongsTo(Order::class);
+    }
+
+    public function isSuccessful(): bool
+    {
+        return $this->result_code === 0;
+    }
+}

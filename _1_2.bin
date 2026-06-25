@@ -1,0 +1,35 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
+class Order extends Model
+{
+    protected $fillable = [
+        'order_number',
+        'user_id',
+        'total_amount',
+        'discount',
+        'status',
+        'mpesa_checkout_request_id',
+    ];
+
+    public function transactions(): HasMany
+    {
+        return $this->hasMany(Transaction::class);
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    /** Latest successful transaction */
+    public function successfulTransaction()
+    {
+        return $this->transactions()->where('result_code', 0)->latest()->first();
+    }
+}
